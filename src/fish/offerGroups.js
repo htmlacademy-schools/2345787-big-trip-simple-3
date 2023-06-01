@@ -12,7 +12,6 @@ const generateOffersOfType = (quantity) => {
   return offers;
 };
 
-
 const generateOfferGroups = () => {
   const groups = [];
 
