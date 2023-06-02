@@ -14,6 +14,7 @@ const cities = [
   'Tokyo',
   'Moscow',
   'Sydney',
+  'Hong Kong',
 ];
 
 const generateDescription = (items) => getRandomArrayElement(items);
