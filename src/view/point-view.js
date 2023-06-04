@@ -1,7 +1,7 @@
-import ListItemView, {html} from './list-item-view.js';
-import OfferView from './offer-view.js';
+import './css/point-view.css';
+import View, {html} from './view.js';
 
-export default class PointView extends ListItemView {
+export default class PointView extends View {
   #id;
 
   /**
@@ -12,12 +12,19 @@ export default class PointView extends ListItemView {
 
     this.#id = state.id;
     this.id = `${this.constructor}-${state.id}`;
+    this.classList.add('trip-events__item');
+    if (state.index !== null) {
+      this.classList.add('trip-events__item--reveal');
+      this.style.setProperty('--index', String(state.index));
 
+      this.addEventListener('animationend', this.onAnimationEnd);
+    }
     this.addEventListener('click', this.onClick);
   }
 
   /**
    * @override
+   * @param {PointState} state
    */
   createTemplate(state) {
     return html`
@@ -51,6 +58,7 @@ export default class PointView extends ListItemView {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <div class="event__selected-offers">
+          ${this.createOffersTemplate(state.offers)}
         </div>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
@@ -59,37 +67,41 @@ export default class PointView extends ListItemView {
     `;
   }
 
+  /**
+   * @param {OfferState[]} states
+   */
+  createOffersTemplate(states) {
+    return states.map((state) => {
+      const [title, price] = state;
+      return html`
+        <div class="event__offer">
+          <span class="event__offer-title">${title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${price}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
   getId() {
     return this.#id;
   }
 
   /**
-   * @param {OfferState[]} states
+   * @param {Event & {target: Element}} event
    */
-  setOffers(states) {
-    const views = states.map((state) => new OfferView(...state));
-
-    this.querySelector('.event__selected-offers').replaceChildren(...views);
-
-    return this;
+  onClick(event) {
+    if (event.target.closest('.event__rollup-btn')) {
+      this.dispatchEvent(new CustomEvent('edit', {bubbles: true}));
+    }
   }
 
-  onClick(event) {
-    if (!event.target.closest('.event__rollup-btn')) {
-      return;
-    }
-
-    event.preventDefault();
-
-    this.dispatchEvent(
-      new CustomEvent('point-edit', {
-        bubbles: true,
-      })
-    );
+  onAnimationEnd() {
+    this.style.removeProperty('--index');
   }
 
   /**
-   * @param {number} id
+   * @param {string} id
    * @param {Document | Element} rootView
    * @returns {PointView}
    */

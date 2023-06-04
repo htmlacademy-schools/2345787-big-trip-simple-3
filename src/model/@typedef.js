@@ -1,18 +1,14 @@
-/** @typedef {import('./application-model').default} ApplicationModel */
+/** @typedef {import('./app-model').default} AppModel */
 
 /**
  * @template Item
  * @template {Adapter} ItemAdapter
- * @typedef {import('./collection-model').default<Item,ItemAdapter>} CollectionModel
+ * @typedef {import('./data-manager').default<Item,ItemAdapter>} DataManagerModel
  */
 
 /**
  * @template Item
  * @template {Adapter} ItemAdapter
- * @typedef {import('./data-table-model').default<Item,ItemAdapter>} DataTableModel
+ * @typedef {import('./data-table').default<Item,ItemAdapter>} DataTableModel
  */
 
-/**
- * @template {Adapter} ItemAdapter
- * @typedef {CustomEvent<ItemAdapter>} CollectionModelEvent
- */

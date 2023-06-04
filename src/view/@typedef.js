@@ -5,21 +5,31 @@
 /** @typedef {import('./filter-view').default} FilterView */
 /** @typedef {import('./sort-view').default} SortView */
 /** @typedef {import('./point-view').default} PointView */
-/** @typedef {import('./editor-view').default} EditorView */
-/** @typedef {import('./creator-view').default} CreatorView */
+/** @typedef {import('./point-editor').default} PointEditor */
+/** @typedef {import('./point-creator').default} PointCreator */
 /** @typedef {import('./list-view').default} ListView */
-/** @typedef {import('./offer-view').State} OfferState */
 
 /**
  * @typedef PointState
- * @prop {number} id
+ * @prop {string} id
+ * @prop {number | null} index
  * @prop {string} startIsoDate
  * @prop {string} endIsoDate
  * @prop {string} startDate
  * @prop {string} title
- * @prop {string} icon
+ * @prop {string} type
  * @prop {string} startTime
  * @prop {string} endTime
  * @prop {string} price
  * @prop {OfferState[]} offers
+ */
+
+/**
+ * @typedef {[string, string]} FilterOptionState
+ * @typedef {[string, string]} SortOptionState
+ * @typedef {[label: string, value: string]} PointTypeOptionState
+ * @typedef {[title: string, price: number]} OfferState
+ * @typedef {[string, string]} DestinationOptionState
+ * @typedef {[string, string, string, boolean]} OfferOptionState
+ * @typedef {[string, string]} DestinationPictureState
  */

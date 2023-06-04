@@ -12,7 +12,12 @@ export default class FilterView extends RadioGroupView {
   `;
   }
 
-  createOptionTemplate(label, value) {
+  /**
+   * @param {FilterOptionState} state
+   */
+  createOptionTemplate(state) {
+    const [label, value] = state;
+
     return html`
       <div class="trip-filters__filter">
         <input
@@ -33,14 +38,12 @@ export default class FilterView extends RadioGroupView {
   }
 
   /**
-   * @param {[string, string][]} states
+   * @param {FilterOptionState[]} states
    */
   setOptions(states) {
-    const templates = states.map((state) => this.createOptionTemplate(...state));
-
+    const templates = states.map(this.createOptionTemplate);
     this.querySelector('.trip-filters')
       .insertAdjacentHTML('afterbegin', templates.join(''));
-
     return this;
   }
 }

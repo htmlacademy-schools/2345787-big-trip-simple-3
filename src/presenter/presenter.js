@@ -8,7 +8,6 @@ export default class Presenter {
    */
   constructor(...args) {
     const [model, view] = args;
-
     this.model = model;
     this.view = view;
   }

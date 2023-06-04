@@ -1,4 +1,4 @@
-import './view.css';
+import './css/view.css';
 
 /**
  * @param {TemplateStringsArray} strings
@@ -7,17 +7,13 @@ import './view.css';
  */
 export const html = (strings, ...values) =>
   values.reduce((result, value, index) => {
-
     if (value?.isViewConstructor) {
       value = `<${value}></${value}>`;
     }
-
-    if (Array.isArray(value)) {
+    else if (Array.isArray(value)) {
       value = value.join('');
     }
-
     return result + value + strings[index + 1];
-
   }, strings[0]);
 
 export default class View extends HTMLElement {
@@ -25,7 +21,7 @@ export default class View extends HTMLElement {
     super();
 
     this.insertAdjacentHTML(
-      this.adjacentHtmlPosition,
+      this.templatePosition,
       this.createTemplate(...arguments)
     );
   }
@@ -33,7 +29,7 @@ export default class View extends HTMLElement {
   /**
    * @type {InsertPosition}
    */
-  get adjacentHtmlPosition() {
+  get templatePosition() {
     return 'beforeend';
   }
 
@@ -42,18 +38,15 @@ export default class View extends HTMLElement {
   }
 
   /**
-   * @param {string} key
-   * @param {*} value
+   * @param {boolean} flag
    */
-  set(key, value) {
-    this[key] = value;
-
+  display(flag) {
+    this.hidden = !flag;
     return this;
   }
 
   shake() {
     this.classList.add('shake');
-
     this.addEventListener('animationend', () => {
       this.classList.remove('shake');
     }, {
@@ -71,7 +64,6 @@ export default class View extends HTMLElement {
 
   static get tagName() {
     const hyphenCaseName = this.name.replace(/[A-Z]/g, '-$&').toLowerCase();
-
     return this.tagNamePrefix + hyphenCaseName.replace(/-view$/, '');
   }
 
