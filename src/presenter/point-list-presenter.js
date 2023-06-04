@@ -1,10 +1,8 @@
 import {escape} from 'he';
 import { formatDate, formatTime, formatNumber } from '../format.js';
-
 import Mode from '../options/mode.js';
 import PointType from '../options/point-type.js';
 import PointLabel from '../options/point-label.js';
-
 import Presenter from './presenter.js';
 
 /**
@@ -18,7 +16,6 @@ export default class PointListPresenter extends Presenter {
    */
   constructor(...args) {
     super(...args);
-
     this.updateView();
     this.view.addEventListener('edit', this.onViewEdit.bind(this));
     this.model.pointsModel.addEventListener(

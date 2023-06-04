@@ -16,7 +16,6 @@ export default class SortPresenter extends Presenter {
    */
   constructor(...args) {
     super(...args);
-
     this.buildView();
     this.view.addEventListener('change', this.onViewChange.bind(this));
     this.model.pointsModel.addEventListener(
