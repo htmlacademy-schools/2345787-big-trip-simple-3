@@ -17,7 +17,6 @@ export default class FilterView extends RadioGroupView {
    */
   createOptionTemplate(state) {
     const [label, value] = state;
-
     return html`
       <div class="trip-filters__filter">
         <input
