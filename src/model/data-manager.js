@@ -10,7 +10,6 @@ export default class DataManagerModel extends Model {
 
   /** @type {Promise<void>} */
   #ready;
-
   #appStore;
   #adapt;
 

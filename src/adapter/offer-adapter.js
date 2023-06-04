@@ -6,7 +6,6 @@ export default class OfferAdapter extends Adapter {
    */
   constructor(data) {
     super();
-
     this.id = String(data.id);
     this.title = data.title;
     this.price = data.price;
