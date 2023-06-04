@@ -12,7 +12,6 @@ export default class AppModel extends Model {
    */
   constructor(pointsModel, destinationsModel, offerGroupsModel) {
     super();
-
     this.pointsModel = pointsModel;
     this.destinationsModel = destinationsModel;
     this.offerGroupsModel = offerGroupsModel;
