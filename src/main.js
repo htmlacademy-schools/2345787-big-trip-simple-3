@@ -34,7 +34,6 @@ const destinationsStore = new AppStore(DESTINATIONS_URL, AUTHORIZATION_CODE);
 
 /** @type {AppStore<OfferGroup>} */
 const offerGroupsStore = new AppStore(OFFERS_URL, AUTHORIZATION_CODE);
-
 const pointsModel = new DataTableModel(pointsStore, (item) => new PointAdapter(item))
   .setFilter(EventFilterPredicate.EVERYTHING)
   .setSort(EventSortComparator.DAY);
