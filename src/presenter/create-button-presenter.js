@@ -1,8 +1,8 @@
-import Mode from '../enum/mode.js';
+import Mode from '../options/mode.js';
 import Presenter from './presenter.js';
 
 /**
- * @template {ApplicationModel} Model
+ * @template {AppModel} Model
  * @template {HTMLButtonElement} View
  * @extends {Presenter<Model,View>}
  */
@@ -13,15 +13,15 @@ export default class CreateButtonPresenter extends Presenter {
   constructor(...args) {
     super(...args);
 
-    this.view.addEventListener('click', this.onClick.bind(this));
-    this.model.addEventListener('mode', this.onModeChange.bind(this));
+    this.view.addEventListener('click', this.onViewClick.bind(this));
+    this.model.addEventListener('mode', this.onModelMode.bind(this));
   }
 
-  onClick() {
+  onViewClick() {
     this.model.setMode(Mode.CREATE);
   }
 
-  onModeChange() {
+  onModelMode() {
     this.view.disabled = (this.model.getMode() === Mode.CREATE);
   }
 }

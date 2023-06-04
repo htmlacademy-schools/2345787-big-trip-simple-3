@@ -12,7 +12,7 @@
  * @prop {string} id
  * @prop {number[]} offers
  * @prop {string} type
- * @prop {boolean} is_favorite
+ * @prop {boolean} isFavorite
  */
 
 /**
