@@ -1,69 +1,70 @@
-import FilterPredicate from './enum/filter-predicate.js';
-
-import Store from './store/store.js';
-import CollectionModel from './model/collection-model.js';
-import DataTableModel from './model/data-table-model.js';
-import ApplicationModel from './model/application-model.js';
-
+import EventFilterPredicate from './options/event-filter-predicate.js';
+import EventSortComparator from './options/event-sort-comparator.js';
+import Service from './service/service.js';
+import DataManagerModel from './model/data-manager.js';
+import DataTableModel from './model/data-table.js';
+import AppModel from './model/app-model.js';
 import PointAdapter from './adapter/point-adapter.js';
 import DestinationAdapter from './adapter/destination-adapter.js';
 import OfferGroupAdapter from './adapter/offer-group-adapter.js';
-
-import PlaceholderView from './view/placeholder-view.js';
-import FilterSelectView from './view/filter-select-view.js';
-import SortSelectView from './view/sort-select-view.js';
-import PointListView from './view/point-list-view.js';
+import FilterView from './view/filter-view.js';
+import SortView from './view/sort-view.js';
+import ListView from './view/list-view.js';
+import CreatorView from './view/creator-view.js';
 import EditorView from './view/editor-view.js';
-
 import FilterPresenter from './presenter/filter-presenter.js';
 import SortPresenter from './presenter/sort-presenter.js';
 import PointListPresenter from './presenter/point-list-presenter.js';
-import EditorPresenter from './presenter/editor-presenter.js';
+import PointEditorPresenter from './presenter/point-editor-presenter.js';
+import PlaceholderPresenter from './presenter/placeholder-presenter.js';
+import CreateButtonPresenter from './presenter/create-button-presenter.js';
+import FormHandlerPresenter from './presenter/form-handler-presenter.js';
 
-const BASE_URL = 'https://18.ecmascript.pages.academy/big-trip';
-const POINTS_URL = `${BASE_URL}/points`;
-const DESTINATIONS_URL = `${BASE_URL}/destinations`;
-const OFFERS_URL = `${BASE_URL}/offers`;
-const AUTH = 'Basic er118jdzbdw';
+const SERVER_URL = 'https://18.ecmascript.pages.academy/big-trip';
+const POINTS_URL = `${SERVER_URL}/points`;
+const DESTINATIONS_URL = `${SERVER_URL}/destinations`;
+const OFFERS_URL = `${SERVER_URL}/offers`;
+const AUTHORIZATION_CODE = 'Basic er883jdzbdw';
 
-/** @type {Store<Point>} */
-const pointStore = new Store(POINTS_URL, AUTH);
+/** @type {Service<Point>} */
+const pointsStore = new Service(POINTS_URL, AUTHORIZATION_CODE);
 
-/** @type {Store<Destination>} */
-const destinationStore = new Store(DESTINATIONS_URL, AUTH);
+/** @type {Service<Destination>} */
+const destinationsStore = new Service(DESTINATIONS_URL, AUTHORIZATION_CODE);
 
-/** @type {Store<OfferGroup>} */
-const offerStore = new Store(OFFERS_URL, AUTH);
+/** @type {Service<OfferGroup>} */
+const offerGroupsStore = new Service(OFFERS_URL, AUTHORIZATION_CODE);
+const pointsModel = new DataTableModel(pointsStore, (item) => new PointAdapter(item))
+  .setFilter(EventFilterPredicate.EVERYTHING)
+  .setSort(EventSortComparator.DAY);
+const destinationsModel = new DataManagerModel(destinationsStore, (item) => new DestinationAdapter(item));
+const offerGroupsModel = new DataManagerModel(offerGroupsStore, (item) => new OfferGroupAdapter(item));
+const applicationModel = new AppModel(pointsModel, destinationsModel, offerGroupsModel);
 
-const points = new DataTableModel(
-  pointStore,
-  (point) => new PointAdapter(point)
-).setFilter(FilterPredicate.EVERYTHING);
+/** @type {SortView} */
+const sortView = document.querySelector(String(SortView));
 
-const destinations = new CollectionModel(
-  destinationStore,
-  (destination) => new DestinationAdapter(destination)
-);
+/** @type {HTMLParagraphElement} */
+const placeholderView = document.querySelector('.trip-events__msg');
 
-const offerGroups = new CollectionModel(
-  offerStore,
-  (offerGroup) => new OfferGroupAdapter(offerGroup)
-);
+/** @type {ListView} */
+const listView = document.querySelector(String(ListView));
 
-const applicationModel = new ApplicationModel(points, destinations, offerGroups);
+/** @type {HTMLButtonElement} */
+const createButtonView = document.querySelector('.trip-main__event-add-btn');
 
-const placeholderView = document.querySelector(String(PlaceholderView));
-const sortView = new SortSelectView();
-const pointListView = new PointListView();
-
-/** @type {FilterSelectView} */
-const filterView = document.querySelector(String(FilterSelectView));
+/** @type {FilterView} */
+const filterView = document.querySelector(String(FilterView));
 
 applicationModel.ready().then(() => {
-  placeholderView.replaceWith(sortView, pointListView);
-
   new FilterPresenter(applicationModel, filterView);
   new SortPresenter(applicationModel, sortView);
-  new PointListPresenter(applicationModel, pointListView);
-  new EditorPresenter(applicationModel, new EditorView());
+  new PointListPresenter(applicationModel, listView);
+  new PointEditorPresenter(applicationModel, new EditorView());
+  new FormHandlerPresenter(applicationModel, new CreatorView().target(listView));
+  new PlaceholderPresenter(applicationModel, placeholderView);
+  new CreateButtonPresenter(applicationModel, createButtonView);
+
+}).catch((exception) => {
+  placeholderView.textContent = exception;
 });

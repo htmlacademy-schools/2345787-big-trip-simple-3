@@ -1,15 +1,10 @@
 import './offer-select-view.css';
+import View, {html} from './view.js';
 
-import ComponentView, {html} from './component-view.js';
-import OfferOptionView from './offer-option-view';
-
-export default class OfferSelectView extends ComponentView {
+export default class OfferSelectView extends View {
   constructor() {
     super(...arguments);
-
     this.classList.add('event__section', 'event__section--offers');
-
-    this.offersView = this.querySelector('.event__available-offers');
   }
 
   /**
@@ -23,32 +18,41 @@ export default class OfferSelectView extends ComponentView {
   }
 
   /**
-   * @param {[number, string, number][]} states
+   * @param {OfferOptionState} state
    */
-  setOptions(states) {
-    const areOffersEmpty = (states.length === 0);
-    const views = states.map((state) => new OfferOptionView(...state));
+  createOptionTemplate(state) {
+    const [id, title, price, isChecked] = state;
+    return html`
+      <div class="event__offer-selector">
+        <input
+          class="event__offer-checkbox  visually-hidden"
+          id="event-offer-${id}"
+          type="checkbox"
+          name="event-offer"
+          value="${id}"
+          ${isChecked ? 'checked' : ''}
+        >
+        <label class="event__offer-label" for="event-offer-${id}">
+          <span class="event__offer-title">${title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${price}</span>
+        </label>
+      </div>
+    `;
+  }
 
-    if (areOffersEmpty) {
-      this.hidden = true;
-
-      return this;
-    }
-
-    this.hidden = false;
-    this.offersView.replaceChildren(...views);
-
-    return this;
+  getSelectedValues() {
+    /** @type {NodeListOf<HTMLInputElement>} */
+    const selectedInputViews = this.querySelectorAll(':checked');
+    return [...selectedInputViews].map((view) => view.value);
   }
 
   /**
-   * @param {boolean[]} flags
+   * @param {OfferOptionState[]} states
    */
-  setOptionsChecked(flags) {
-    const inputViews = this.querySelectorAll('input');
-
-    flags.forEach((flag, index) => (inputViews[index].checked = flag));
-
+  setOptions(states) {
+    const templates = states.map(this.createOptionTemplate);
+    this.querySelector('.event__available-offers').innerHTML = templates.join('');
     return this;
   }
 }

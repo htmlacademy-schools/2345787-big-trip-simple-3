@@ -1,23 +1,37 @@
 import 'flatpickr/dist/flatpickr.min.css';
 
-import flatpickr from 'flatpickr';
-import ComponentView, {html} from './component-view.js';
+import KeyboardHandler from '../options/keyboard-handler.js';
+import initCalendar from 'flatpickr';
+import View, {html} from './view.js';
 
-const DATE_FORMAT = 'd/m/y H:i';
-
-export default class DatePickerView extends ComponentView {
-  #startInputSelector = '[name="event-start-time"]';
-  #endInputSelector = '[name="event-end-time"]';
-
-  #startFlatpickr = null;
-  #endFlatpickr = null;
+export default class DatePickerView extends View {
+  #startDateCalendar;
+  #endDateCalendar;
 
   constructor() {
     super(...arguments);
 
-    this.classList.add('event__field-group', 'event__field-group--time');
+    this.addEventListener('keydown', this.onKeydown.bind(this), true);
 
-    this.#initFlatpickr();
+    /**
+     * @type {Calendar}
+     */
+    this.#startDateCalendar = initCalendar(this.querySelector('[name="date_from"]'));
+
+    /**
+     * @type {Calendar}
+     */
+    this.#endDateCalendar = initCalendar(this.querySelector('[name="date_to"]'));
+
+    this.classList.add('event__field-group', 'event__field-group--time');
+  }
+
+  get isOpen() {
+    return this.#startDateCalendar.isOpen || this.#endDateCalendar.isOpen;
+  }
+
+  get disallowedKeys() {
+    return ['Backspace', 'Delete'];
   }
 
   /**
@@ -30,8 +44,8 @@ export default class DatePickerView extends ComponentView {
         class="event__input  event__input--time"
         id="event-start-time-1"
         type="text"
-        name="event-start-time"
-        value=""
+        name="date_from"
+        required
       >
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
@@ -39,75 +53,64 @@ export default class DatePickerView extends ComponentView {
         class="event__input  event__input--time"
         id="event-end-time-1"
         type="text"
-        name="event-end-time"
-        value=""
+        name="date_to"
+        required
       >
     `;
   }
 
-  #initFlatpickr() {
-    const changeDate = (_, __, instance) => {
-      const inputView = instance.element;
-      const isStartInput = inputView.closest(this.#startInputSelector);
-
-      if (isStartInput) {
-        this.#updateStartDate();
-        return;
-      }
-
-      this.#updateEndDate();
-    };
-
-    const options = {
-      'dateFormat': DATE_FORMAT,
-      'enableTime': true,
-      'time_24hr': true,
-      'onChange': changeDate,
-    };
-
-    this.#startFlatpickr = flatpickr(
-      this.querySelector(this.#startInputSelector),
-      options
-    );
-
-    this.#endFlatpickr = flatpickr(
-      this.querySelector(this.#endInputSelector),
-      options
-    );
+  close() {
+    this.#startDateCalendar.close();
+    this.#endDateCalendar.close();
   }
 
-  #updateStartDate() {
-    const [date] = this.#startFlatpickr.selectedDates;
-    this.#endFlatpickr.set('minDate', date);
-  }
-
-  #updateEndDate() {
-    const [date] = this.#endFlatpickr.selectedDates;
-    this.#startFlatpickr.set('maxDate', date);
+  getDates() {
+    return [
+      this.#startDateCalendar.selectedDates[0]?.toJSON(),
+      this.#endDateCalendar.selectedDates[0]?.toJSON()
+    ];
   }
 
   /**
-   * @param {string} value
+   * @param {CalendarDate} startDate
+   * @param {CalendarDate} endDate
    */
-  setStartDate(value) {
-    const date = new Date(value);
-
-    this.#startFlatpickr.setDate(date);
-    this.#updateStartDate();
-
+  setDates(startDate, endDate = startDate, notify = true) {
+    this.#startDateCalendar.setDate(startDate, notify);
+    this.#endDateCalendar.setDate(endDate, notify);
     return this;
   }
 
   /**
-   * @param {string} value
+   * @param {CalendarOptions} startDateOptions
+   * @param {CalendarOptions} endDateOptions
    */
-  setEndDate(value) {
-    const date = new Date(value);
-
-    this.#endFlatpickr.setDate(date);
-    this.#updateEndDate();
-
+  configure(startDateOptions, endDateOptions = startDateOptions) {
+    this.#startDateCalendar.set(startDateOptions);
+    this.#endDateCalendar.set(endDateOptions);
     return this;
+  }
+
+  /**
+   * @param {KeyboardEvent} event
+   */
+  onKeydown(event) {
+    if (this.disallowedKeys.includes(event.key)) {
+      event.stopPropagation();
+      return;
+    }
+
+    if (KeyboardHandler.EXIT.includes(event.key) && this.isOpen) {
+      event.stopPropagation();
+      this.close();
+    }
+  }
+
+  /**
+   * @param {CalendarOptions} options
+   */
+  static configure(options) {
+    initCalendar.setDefaults(options);
   }
 }
 

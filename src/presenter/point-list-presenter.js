@@ -1,13 +1,14 @@
-import Type from '../enum/type.js';
-import TypeLabel from '../enum/type-label.js';
-import DateFormat from '../enum/date-format.js';
+import {escape} from 'he';
+import { formatDate, formatTime, formatNumber } from '../format.js';
+import Mode from '../options/mode.js';
+import PointType from '../options/point-type.js';
+import PointLabel from '../options/point-label.js';
 import Presenter from './presenter.js';
-import { formatDate } from '../utils.js';
 
 /**
- * @template {ApplicationModel} Model
- * @template {PointListView} View
- * @extends Presenter<Model,View>
+ * @template {AppModel} Model
+ * @template {ListView} View
+ * @extends {Presenter<Model,View>}
  */
 export default class PointListPresenter extends Presenter {
   /**
@@ -15,47 +16,76 @@ export default class PointListPresenter extends Presenter {
    */
   constructor(...args) {
     super(...args);
-
-    this.model.points.addEventListener(
-      ['add', 'update', 'remove', 'filter', 'sort'],
-      this.updateView.bind(this)
-    );
-
     this.updateView();
+    this.view.addEventListener('edit', this.onViewEdit.bind(this));
+    this.model.pointsModel.addEventListener(
+      ['add', 'update', 'remove', 'filter', 'sort'],
+      this.onPointsModelChange.bind(this)
+    );
   }
 
-  updateView() {
-    const points = this.model.points.list();
-
-    const states = points.map((point) => {
+  /**
+   * @param {string} [revealingPointId]
+   */
+  updateView(revealingPointId) {
+    const points = this.model.pointsModel.list();
+    const states = points.map((point, index) => {
       const {startDate, endDate} = point;
-      const destination = this.model.destinations.findById(point.destinationId);
-      const typeLabel = TypeLabel[Type.findKey(point.type)];
+      const destination = this.model.destinationsModel.findById(point.destinationId);
+      const typeLabel = PointLabel[PointType.findKey(point.type)];
       const title = `${typeLabel} ${destination.name}`;
-      const offerGroup = this.model.offerGroups.findById(point.type);
-
+      const offerGroup = this.model.offerGroupsModel.findById(point.type);
       const offerStates = offerGroup.items.reduce((result, offer) => {
         if (point.offerIds.includes(offer.id)) {
-          result.push([offer.title, offer.price]);
+          result.push([escape(offer.title), escape(formatNumber(offer.price))]);
         }
         return result;
       }, []);
-
+      if (revealingPointId) {
+        index = (revealingPointId === point.id) ? 0 : null;
+      }
       return {
-        id: point.id,
-        type: point.type,
-        startIsoDate: startDate,
-        endIsoDate: endDate,
-        title,
-        icon: point.type,
-        startDate: formatDate(startDate, DateFormat.CALENDAR_DATE),
-        startTime: formatDate(startDate, DateFormat.TIME),
-        endTime: formatDate(endDate, DateFormat.TIME),
-        price: String(point.basePrice),
+        id: escape(point.id),
+        index,
+        type: escape(point.type),
+        startIsoDate: escape(startDate),
+        endIsoDate: escape(endDate),
+        title: escape(title),
+        icon: escape(point.type),
+        startDate: formatDate(startDate),
+        startTime: formatTime(startDate),
+        endTime: formatTime(endDate),
+        price: escape(formatNumber(point.basePrice)),
         offers: offerStates
       };
     });
+    this.view.setPoints(states);
+  }
 
-    this.view.setItems(states);
+  /**
+   * @param {CustomEvent<PointAdapter> & CustomEvent<[newItem: PointAdapter, oldItem: PointAdapter]>} event
+   */
+  onPointsModelChange(event) {
+    if (event.type === 'add') {
+      this.updateView(event.detail.id);
+      return;
+    }
+    if (event.type === 'update') {
+      const [point] = event.detail;
+      this.updateView(point.id);
+      return;
+    }
+    if (event.type === 'remove') {
+      this.view.findById(event.detail.id).remove();
+      return;
+    }
+    this.updateView();
+  }
+
+  /**
+   * @param {CustomEvent & {target: PointView}} event
+   */
+  onViewEdit(event) {
+    this.model.setMode(Mode.EDIT, event.target.getId());
   }
 }

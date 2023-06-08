@@ -1,13 +1,13 @@
-import Filter from '../enum/filter.js';
-import FilterLabel from '../enum/filter-label.js';
-import FilterDisabled from '../enum/filter-disabled.js';
-import FilterPredicate from '../enum/filter-predicate.js';
+import Mode from '../options/mode.js';
+import EventFilterType from '../options/event-filter-type.js';
+import EventLabel from '../options/event-label.js';
+import EventFilterPredicate from '../options/event-filter-predicate.js';
 import Presenter from './presenter.js';
 
 /**
- * @template {ApplicationModel} Model
- * @template {FilterSelectView} View
- * @extends Presenter<Model,View>
+ * @template {AppModel} Model
+ * @template {FilterView} View
+ * @extends {Presenter<Model,View>}
  */
 export default class FilterPresenter extends Presenter {
   /**
@@ -16,29 +16,59 @@ export default class FilterPresenter extends Presenter {
   constructor(...args) {
     super(...args);
 
-    const points = this.model.points.list();
+    this.buildView();
 
-    /** @type {[string, string][]} */
-    const options = Object.keys(Filter).map(
-      (key) => [FilterLabel[key], Filter[key]]
+    this.view.addEventListener('change', this.onViewChange.bind(this));
+    this.model.addEventListener('mode', this.onModelModeChange.bind(this));
+
+    this.model.pointsModel.addEventListener(
+      ['add', 'remove', 'update'],
+      this.onPointsModelChange.bind(this)
     );
-
-    const optionsDisabled = Object.keys(Filter).map(
-      (key) => FilterDisabled[key](points)
-    );
-
-    this.view
-      .setOptions(options)
-      .setOptionsDisabled(optionsDisabled)
-      .setValue(Filter.EVERYTHING);
-
-    this.view.addEventListener('change', this.onChange.bind(this));
   }
 
-  onChange() {
-    const value = this.view.getValue();
-    const predicate = FilterPredicate[Filter.findKey(value)];
+  buildView() {
+    /** @type {FilterOptionState[]} */
+    const options = Object.keys(EventFilterType).map(
+      (key) => [EventLabel[key], EventFilterType[key]]
+    );
 
-    this.model.points.setFilter(predicate);
+    this.view.setOptions(options);
+    this.updateViewOptionsDisabled();
+    this.updateViewValue();
+  }
+
+  updateViewValue() {
+    const predicate = this.model.pointsModel.getFilter();
+    const type = EventFilterType[EventFilterPredicate.findKey(predicate)];
+
+    this.view.setValue(type);
+  }
+
+  updateViewOptionsDisabled() {
+    const predicates = Object.values(EventFilterPredicate);
+    const states = predicates.map((predicate) =>
+      !this.model.pointsModel.list(predicate).length);
+
+    this.view.setOptionsDisabled(states);
+  }
+
+  onViewChange() {
+    const value = this.view.getValue();
+    const predicate = EventFilterPredicate[EventFilterType.findKey(value)];
+
+    this.model.setMode(Mode.VIEW);
+    this.model.pointsModel.setFilter(predicate);
+  }
+
+  onPointsModelChange() {
+    this.updateViewOptionsDisabled();
+  }
+
+  onModelModeChange() {
+    if (this.model.getMode() === Mode.CREATE) {
+      this.model.pointsModel.setFilter(EventFilterPredicate.EVERYTHING);
+      this.updateViewValue();
+    }
   }
 }

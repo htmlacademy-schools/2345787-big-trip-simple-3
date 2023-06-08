@@ -1,15 +1,14 @@
-import Sort from '../enum/sort.js';
-import SortLabel from '../enum/sort-label.js';
-import SortDisabled from '../enum/sort-disabled.js';
+import SortType from '../options/sort-type.js';
+import SortLabel from '../options/sort-label.js';
+import SortControl from '../options/sort-control.js';
 import Presenter from './presenter.js';
-import SortPredicate from '../enum/sort-predicate.js';
-
-const SORT_DEFAULT = Sort.DAY;
+import EventSortComparator from '../options/event-sort-comparator.js';
+import Mode from '../options/mode.js';
 
 /**
- * @template {ApplicationModel} Model
- * @template {SortSelectView} View
- * @extends Presenter<Model,View>
+ * @template {AppModel} Model
+ * @template {SortView} View
+ * @extends {Presenter<Model,View>}
  */
 export default class SortPresenter extends Presenter {
   /**
@@ -17,30 +16,53 @@ export default class SortPresenter extends Presenter {
    */
   constructor(...args) {
     super(...args);
+    this.buildView();
+    this.view.addEventListener('change', this.onViewChange.bind(this));
+    this.model.pointsModel.addEventListener(
+      ['add', 'remove', 'filter'],
+      this.onPointsModelChange.bind(this)
+    );
+  }
 
-    /** @type {[string, string][]} */
-    const options = Object.keys(Sort).map((key) => [SortLabel[key], Sort[key]]);
-
-    const optionsDisabled = Object.values(SortDisabled);
-
+  buildView() {
+    /** @type {SortOptionState[]} */
+    const options = Object.keys(SortType).map(
+      (key) => [SortLabel[key], SortType[key]]
+    );
     this.view
       .setOptions(options)
-      .setOptionsDisabled(optionsDisabled)
-      .setValue(Sort.DAY);
-
-    this.view.addEventListener('change', this.onChange.bind(this));
-    this.model.points.addEventListener('filter', this.onFilter.bind(this));
+      .setOptionsDisabled(Object.values(SortControl));
+    this.updateViewValue();
+    this.updateViewDisplay();
   }
 
-  onChange() {
+  updateViewValue() {
+    const compare = this.model.pointsModel.getSort();
+    const type = SortType[EventSortComparator.findKey(compare)];
+    this.view.setValue(type);
+  }
+
+  updateViewDisplay() {
+    const {length} = this.model.pointsModel.list();
+    this.view.display(Boolean(length));
+  }
+
+  onViewChange() {
     const value = this.view.getValue();
-    const compare = SortPredicate[Sort.findKey(value)];
-
-    this.model.points.setSort(compare);
+    const compare = EventSortComparator[SortType.findKey(value)];
+    this.model.setMode(Mode.VIEW);
+    this.model.pointsModel.setSort(compare);
   }
 
-  onFilter() {
-    this.view.setValue(SORT_DEFAULT);
-    this.model.points.setSort(SortPredicate.DEFAULT);
+  /**
+   * @param {CustomEvent} event
+   */
+  onPointsModelChange(event) {
+    if (event.type === 'filter') {
+      this.model.pointsModel.setSort(EventSortComparator.DAY, false);
+
+      this.updateViewValue();
+    }
+    this.updateViewDisplay();
   }
 }
