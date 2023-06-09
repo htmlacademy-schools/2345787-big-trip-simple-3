@@ -5,8 +5,8 @@
 /** @typedef {import('./filter-view').default} FilterView */
 /** @typedef {import('./sort-view').default} SortView */
 /** @typedef {import('./point-view').default} PointView */
-/** @typedef {import('./point-editor').default} PointEditor */
-/** @typedef {import('./point-creator').default} PointCreator */
+/** @typedef {import('./editor-view').default} EditorView */
+/** @typedef {import('./creator-view').default} CreatorView */
 /** @typedef {import('./list-view').default} ListView */
 
 /**

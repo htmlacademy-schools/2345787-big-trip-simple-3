@@ -19,7 +19,7 @@ export default class FilterPresenter extends Presenter {
     this.buildView();
 
     this.view.addEventListener('change', this.onViewChange.bind(this));
-    this.model.addEventListener('mode', this.onModelMode.bind(this));
+    this.model.addEventListener('mode', this.onModelModeChange.bind(this));
 
     this.model.pointsModel.addEventListener(
       ['add', 'remove', 'update'],
@@ -65,7 +65,7 @@ export default class FilterPresenter extends Presenter {
     this.updateViewOptionsDisabled();
   }
 
-  onModelMode() {
+  onModelModeChange() {
     if (this.model.getMode() === Mode.CREATE) {
       this.model.pointsModel.setFilter(EventFilterPredicate.EVERYTHING);
       this.updateViewValue();

@@ -3,9 +3,9 @@ import Mode from '../options/mode.js';
 import PointType from '../options/point-type.js';
 import PointLabel from '../options/point-label.js';
 import Presenter from './presenter.js';
-import DatePickerRange from '../view/date-picker-range.js';
+import DatePickerView from '../view/date-picker-view.js';
 
-DatePickerRange.configure({
+DatePickerView.configure({
   'enableTime': true,
   'time_24hr': true,
   'dateFormat': 'd/m/y H:i',
@@ -14,7 +14,7 @@ DatePickerRange.configure({
 
 /**
  * @template {AppModel} Model
- * @template {PointCreator} View
+ * @template {CreatorView} View
  * @extends {Presenter<Model,View>}
  */
 export default class FormHandlerPresenter extends Presenter {
@@ -30,7 +30,7 @@ export default class FormHandlerPresenter extends Presenter {
     this.view.datePickerView.addEventListener('change', this.onDatePickerViewChange.bind(this));
     this.view.priceInputView.addEventListener('change', this.onPriceInputViewChange.bind(this));
     this.view.offerSelectView.addEventListener('change', this.onOfferSelectViewChange.bind(this));
-    this.model.addEventListener('mode', this.onModelMode.bind(this));
+    this.model.addEventListener('mode', this.onModelModeChange.bind(this));
     this.view.addEventListener('reset', this.onViewReset.bind(this));
     this.view.addEventListener('close', this.onViewClose.bind(this));
     this.view.addEventListener('submit', this.onViewSubmit.bind(this));
@@ -51,18 +51,16 @@ export default class FormHandlerPresenter extends Presenter {
 
     /** @type {CalendarOptions} */
     const startDateOptions = {
-      onChange: [(selectedDates) => {
+      changeUpdateHandlers: [(selectedDates) => {
         const [minDate] = selectedDates;
-
         this.view.datePickerView.configure({}, {minDate});
       }]
     };
 
     /** @type {CalendarOptions} */
     const endDateOptions = {
-      onValueUpdate: [() => {
+      valueUpdateHandlers: [() => {
         const [startDate, endDate = startDate] = this.view.datePickerView.getDates();
-
         this.view.datePickerView.setDates(startDate, endDate, false);
       }]
     };
@@ -145,6 +143,7 @@ export default class FormHandlerPresenter extends Presenter {
     this.model.activePoint.type = type;
     this.view.destinationSelectView.setLabel(typeLabel);
     this.updateOfferSelectView();
+    this.onOfferSelectViewChange();
   }
 
   onDestinationSelectViewChange() {
@@ -170,7 +169,7 @@ export default class FormHandlerPresenter extends Presenter {
     this.model.activePoint.offerIds = offerIds;
   }
 
-  onModelMode() {
+  onModelModeChange() {
     this.view.close(false);
     if (this.model.getMode() === Mode.CREATE) {
       this.updateView();

@@ -4,10 +4,10 @@
  */
 export default class Presenter {
   /**
-   * @param  {[model: Model, view: View]} args
+   * @param  {Model} model
+   * @param  {View} view
    */
-  constructor(...args) {
-    const [model, view] = args;
+  constructor(model, view) {
     this.model = model;
     this.view = view;
   }

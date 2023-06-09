@@ -1,6 +1,6 @@
 import EventFilterPredicate from './options/event-filter-predicate.js';
 import EventSortComparator from './options/event-sort-comparator.js';
-import AppStore from './appStore/app-store.js';
+import Service from './service/service.js';
 import DataManagerModel from './model/data-manager.js';
 import DataTableModel from './model/data-table.js';
 import AppModel from './model/app-model.js';
@@ -10,8 +10,8 @@ import OfferGroupAdapter from './adapter/offer-group-adapter.js';
 import FilterView from './view/filter-view.js';
 import SortView from './view/sort-view.js';
 import ListView from './view/list-view.js';
-import PointCreator from './view/point-creator.js';
-import PointEditor from './view/point-editor.js';
+import CreatorView from './view/creator-view.js';
+import EditorView from './view/editor-view.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import SortPresenter from './presenter/sort-presenter.js';
 import PointListPresenter from './presenter/point-list-presenter.js';
@@ -26,14 +26,14 @@ const DESTINATIONS_URL = `${SERVER_URL}/destinations`;
 const OFFERS_URL = `${SERVER_URL}/offers`;
 const AUTHORIZATION_CODE = 'Basic er883jdzbdw';
 
-/** @type {AppStore<Point>} */
-const pointsStore = new AppStore(POINTS_URL, AUTHORIZATION_CODE);
+/** @type {Service<Point>} */
+const pointsStore = new Service(POINTS_URL, AUTHORIZATION_CODE);
 
-/** @type {AppStore<Destination>} */
-const destinationsStore = new AppStore(DESTINATIONS_URL, AUTHORIZATION_CODE);
+/** @type {Service<Destination>} */
+const destinationsStore = new Service(DESTINATIONS_URL, AUTHORIZATION_CODE);
 
-/** @type {AppStore<OfferGroup>} */
-const offerGroupsStore = new AppStore(OFFERS_URL, AUTHORIZATION_CODE);
+/** @type {Service<OfferGroup>} */
+const offerGroupsStore = new Service(OFFERS_URL, AUTHORIZATION_CODE);
 const pointsModel = new DataTableModel(pointsStore, (item) => new PointAdapter(item))
   .setFilter(EventFilterPredicate.EVERYTHING)
   .setSort(EventSortComparator.DAY);
@@ -60,8 +60,8 @@ applicationModel.ready().then(() => {
   new FilterPresenter(applicationModel, filterView);
   new SortPresenter(applicationModel, sortView);
   new PointListPresenter(applicationModel, listView);
-  new PointEditorPresenter(applicationModel, new PointEditor());
-  new FormHandlerPresenter(applicationModel, new PointCreator().target(listView));
+  new PointEditorPresenter(applicationModel, new EditorView());
+  new FormHandlerPresenter(applicationModel, new CreatorView().target(listView));
   new PlaceholderPresenter(applicationModel, placeholderView);
   new CreateButtonPresenter(applicationModel, createButtonView);
 

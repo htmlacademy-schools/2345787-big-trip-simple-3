@@ -4,7 +4,7 @@ import PointView from '../view/point-view.js';
 
 /**
  * @template {AppModel} Model
- * @template {PointEditor} View
+ * @template {EditorView} View
  * @extends {FormHandlerPresenter<Model,View>}
  */
 export default class PointEditorPresenter extends FormHandlerPresenter {
@@ -16,10 +16,14 @@ export default class PointEditorPresenter extends FormHandlerPresenter {
     return this.model.pointsModel.update(activePoint.id, activePoint);
   }
 
+  deleteActivePoint() {
+    return this.model.pointsModel.remove(this.model.activePoint.id);
+  }
+
   /**
    * @override
    */
-  onModelMode() {
+  onModelModeChange() {
     this.point = this.model.activePoint;
     this.view.close(false);
     if (this.model.getMode() === Mode.EDIT) {
@@ -43,9 +47,5 @@ export default class PointEditorPresenter extends FormHandlerPresenter {
       this.view.shake();
     }
     this.view.setDeleting(false);
-  }
-
-  deleteActivePoint() {
-    return this.model.pointsModel.remove(this.model.activePoint.id);
   }
 }

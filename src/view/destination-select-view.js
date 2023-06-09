@@ -1,9 +1,9 @@
-import './css/destination-select-view.css';
+import './destination-select-view.css';
 
 import KeyboardHandler from '../options/keyboard-handler';
 import View, {html} from './view.js';
 
-export default class DestinationSelect extends View {
+export default class DestinationSelectView extends View {
   constructor() {
     super(...arguments);
 
@@ -113,4 +113,4 @@ export default class DestinationSelect extends View {
   }
 }
 
-customElements.define(String(DestinationSelect), DestinationSelect);
+customElements.define(String(DestinationSelectView), DestinationSelectView);

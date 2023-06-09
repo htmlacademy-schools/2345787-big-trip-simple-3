@@ -1,7 +1,7 @@
 /**
  * @template Item
  */
-export default class AppStore {
+export default class Service {
   #serverUrl;
   #authorizationCode;
 
@@ -68,7 +68,7 @@ export default class AppStore {
       ...options.headers
     };
     const response = await fetch(url, {...options, headers});
-    const {parse, assert} = /** @type {typeof AppStore} */(this.constructor);
+    const {parse, assert} = /** @type {typeof Service} */(this.constructor);
     await assert(response);
     return parse(response);
   }
