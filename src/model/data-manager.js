@@ -14,7 +14,11 @@ export default class DataManagerModel extends Model {
   #adapt;
 
   /**
+<<<<<<< HEAD
    * @param {Service<Item>} appStore
+=======
+   * @param {AppStore<Item>} appStore
+>>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
    * @param {(item?: Item) => ItemAdapter} adapt
    */
   constructor(appStore, adapt) {

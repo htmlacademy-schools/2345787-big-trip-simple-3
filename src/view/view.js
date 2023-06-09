@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import './view.css';
+=======
+import './css/view.css';
+>>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
 
 /**
  * @param {TemplateStringsArray} strings

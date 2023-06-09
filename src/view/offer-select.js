@@ -1,7 +1,7 @@
-import './offer-select-view.css';
+import './css/offer-select-view.css';
 import View, {html} from './view.js';
 
-export default class OfferSelectView extends View {
+export default class OfferSelect extends View {
   constructor() {
     super(...arguments);
     this.classList.add('event__section', 'event__section--offers');
@@ -57,4 +57,4 @@ export default class OfferSelectView extends View {
   }
 }
 
-customElements.define(String(OfferSelectView), OfferSelectView);
+customElements.define(String(OfferSelect), OfferSelect);

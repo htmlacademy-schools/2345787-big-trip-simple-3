@@ -2,9 +2,9 @@ import DeleteButtonLabel from '../options/delete-button-label.js';
 import SaveButtonLabel from '../options/save-button-label.js';
 
 import {html} from './view.js';
-import CreatorView from './creator-view.js';
+import PointCreator from './point-creator.js';
 
-export default class EditorView extends CreatorView {
+export default class PointEditor extends PointCreator {
   constructor() {
     super();
     this.addEventListener('click', this.onClick);
@@ -57,4 +57,4 @@ export default class EditorView extends CreatorView {
   }
 }
 
-customElements.define(String(EditorView), EditorView);
+customElements.define(String(PointEditor), PointEditor);

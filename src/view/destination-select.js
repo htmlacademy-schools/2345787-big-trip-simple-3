@@ -1,9 +1,17 @@
+<<<<<<< HEAD:src/view/destination-select-view.js
 import './destination-select-view.css';
+=======
+import './css/destination-select-view.css';
+>>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a:src/view/destination-select.js
 
 import KeyboardHandler from '../options/keyboard-handler';
 import View, {html} from './view.js';
 
+<<<<<<< HEAD:src/view/destination-select-view.js
 export default class DestinationSelectView extends View {
+=======
+export default class DestinationSelect extends View {
+>>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a:src/view/destination-select.js
   constructor() {
     super(...arguments);
 
@@ -113,4 +121,4 @@ export default class DestinationSelectView extends View {
   }
 }
 
-customElements.define(String(DestinationSelectView), DestinationSelectView);
+customElements.define(String(DestinationSelect), DestinationSelect);
