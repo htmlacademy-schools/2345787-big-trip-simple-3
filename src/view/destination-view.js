@@ -1,6 +1,6 @@
 import View, {html} from './view.js';
 
-export default class LocationDetails extends View {
+export default class DestinationView extends View {
   constructor() {
     super(...arguments);
     this.classList.add('event__section', 'event__section--destination');
@@ -48,4 +48,4 @@ export default class LocationDetails extends View {
   }
 }
 
-customElements.define(String(LocationDetails), LocationDetails);
+customElements.define(String(DestinationView), DestinationView);

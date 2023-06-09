@@ -1,7 +1,7 @@
 import KeyboardHandler from '../options/keyboard-handler.js';
 import RadioGroupView, {html} from './radio-group-view.js';
 
-export default class PointTypeSelect extends RadioGroupView {
+export default class PointTypeSelectView extends RadioGroupView {
   constructor() {
     super(...arguments);
 
@@ -181,4 +181,4 @@ export default class PointTypeSelect extends RadioGroupView {
   }
 }
 
-customElements.define(String(PointTypeSelect), PointTypeSelect);
+customElements.define(String(PointTypeSelectView), PointTypeSelectView);

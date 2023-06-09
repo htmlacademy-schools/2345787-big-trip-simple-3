@@ -1,38 +1,38 @@
 import SaveButtonLabel from '../options/save-button-label.js';
 import View, {html} from './view.js';
-import PointTypeSelect from './point-type-select.js';
-import DestinationSelect from './destination-select.js';
-import DatePickerRange from './date-picker-range.js';
+import PointTypeSelectView from './point-type-select-view.js';
+import DestinationSelectView from './destination-select-view.js';
+import DatePickerView from './date-picker-view.js';
 import PriceInputView from './price-input-view.js';
-import OfferSelect from './offer-select.js';
-import LocationDetails from './location-details.js';
+import OfferSelectView from './offer-select-view.js';
+import DestinationView from './destination-view.js';
 import LoaderView from './loader-view.js';
 import KeyboardHandler from '../options/keyboard-handler.js';
 
 /**
  * @implements {EventListenerObject}
  */
-export default class PointCreator extends View {
+export default class CreatorView extends View {
   constructor() {
     super();
 
-    /** @type {PointTypeSelect} */
-    this.pointTypeSelectView = this.querySelector(String(PointTypeSelect));
+    /** @type {PointTypeSelectView} */
+    this.pointTypeSelectView = this.querySelector(String(PointTypeSelectView));
 
-    /** @type {DestinationSelect} */
-    this.destinationSelectView = this.querySelector(String(DestinationSelect));
+    /** @type {DestinationSelectView} */
+    this.destinationSelectView = this.querySelector(String(DestinationSelectView));
 
     /** @type {PriceInputView} */
     this.priceInputView = this.querySelector(String(PriceInputView));
 
-    /** @type {DatePickerRange} */
-    this.datePickerView = this.querySelector(String(DatePickerRange));
+    /** @type {DatePickerView} */
+    this.datePickerView = this.querySelector(String(DatePickerView));
 
-    /** @type {OfferSelect} */
-    this.offerSelectView = this.querySelector(String(OfferSelect));
+    /** @type {OfferSelectView} */
+    this.offerSelectView = this.querySelector(String(OfferSelectView));
 
-    /** @type {LocationDetails} */
-    this.destinationView = this.querySelector(String(LocationDetails));
+    /** @type {DestinationView} */
+    this.destinationView = this.querySelector(String(DestinationView));
 
     /** @type {HTMLButtonElement} */
     this.submitButtonView = this.querySelector('.event__save-btn');
@@ -64,15 +64,15 @@ export default class PointCreator extends View {
     return html`
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
-          ${PointTypeSelect}
-          ${DestinationSelect}
-          ${DatePickerRange}
+          ${PointTypeSelectView}
+          ${DestinationSelectView}
+          ${DatePickerView}
           ${PriceInputView}
           ${this.createButtonsTemplate()}
         </header>
         <section class="event__details">
-          ${OfferSelect}
-          ${LocationDetails}
+          ${OfferSelectView}
+          ${DestinationView}
         </section>
       </form>
     `;
@@ -144,4 +144,4 @@ export default class PointCreator extends View {
   }
 }
 
-customElements.define(String(PointCreator), PointCreator);
+customElements.define(String(CreatorView), CreatorView);

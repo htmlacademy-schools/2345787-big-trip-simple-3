@@ -4,7 +4,7 @@ import KeyboardHandler from '../options/keyboard-handler.js';
 import initCalendar from 'flatpickr';
 import View, {html} from './view.js';
 
-export default class DatePickerRange extends View {
+export default class DatePickerView extends View {
   #startDateCalendar;
   #endDateCalendar;
 
@@ -114,4 +114,4 @@ export default class DatePickerRange extends View {
   }
 }
 
-customElements.define(String(DatePickerRange), DatePickerRange);
+customElements.define(String(DatePickerView), DatePickerView);
