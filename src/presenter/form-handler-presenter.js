@@ -51,7 +51,7 @@ export default class FormHandlerPresenter extends Presenter {
 
     /** @type {CalendarOptions} */
     const startDateOptions = {
-      changeUpdateHandlers: [(selectedDates) => {
+      valueUpdateHandlers: [(selectedDates) => {
         const [minDate] = selectedDates;
         this.view.datePickerView.configure({}, {minDate});
       }]
