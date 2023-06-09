@@ -3,15 +3,9 @@ import Mode from '../options/mode.js';
 import PointType from '../options/point-type.js';
 import PointLabel from '../options/point-label.js';
 import Presenter from './presenter.js';
-<<<<<<< HEAD
 import DatePickerView from '../view/date-picker-view.js';
 
 DatePickerView.configure({
-=======
-import DatePickerRange from '../view/date-picker-range.js';
-
-DatePickerRange.configure({
->>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
   'enableTime': true,
   'time_24hr': true,
   'dateFormat': 'd/m/y H:i',
@@ -20,11 +14,7 @@ DatePickerRange.configure({
 
 /**
  * @template {AppModel} Model
-<<<<<<< HEAD
  * @template {CreatorView} View
-=======
- * @template {PointCreator} View
->>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
  * @extends {Presenter<Model,View>}
  */
 export default class FormHandlerPresenter extends Presenter {
@@ -40,11 +30,7 @@ export default class FormHandlerPresenter extends Presenter {
     this.view.datePickerView.addEventListener('change', this.onDatePickerViewChange.bind(this));
     this.view.priceInputView.addEventListener('change', this.onPriceInputViewChange.bind(this));
     this.view.offerSelectView.addEventListener('change', this.onOfferSelectViewChange.bind(this));
-<<<<<<< HEAD
     this.model.addEventListener('mode', this.onModelModeChange.bind(this));
-=======
-    this.model.addEventListener('mode', this.onModelMode.bind(this));
->>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
     this.view.addEventListener('reset', this.onViewReset.bind(this));
     this.view.addEventListener('close', this.onViewClose.bind(this));
     this.view.addEventListener('submit', this.onViewSubmit.bind(this));
@@ -65,28 +51,16 @@ export default class FormHandlerPresenter extends Presenter {
 
     /** @type {CalendarOptions} */
     const startDateOptions = {
-<<<<<<< HEAD
       changeUpdateHandlers: [(selectedDates) => {
         const [minDate] = selectedDates;
-=======
-      onChange: [(selectedDates) => {
-        const [minDate] = selectedDates;
-
->>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
         this.view.datePickerView.configure({}, {minDate});
       }]
     };
 
     /** @type {CalendarOptions} */
     const endDateOptions = {
-<<<<<<< HEAD
       valueUpdateHandlers: [() => {
         const [startDate, endDate = startDate] = this.view.datePickerView.getDates();
-=======
-      onValueUpdate: [() => {
-        const [startDate, endDate = startDate] = this.view.datePickerView.getDates();
-
->>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
         this.view.datePickerView.setDates(startDate, endDate, false);
       }]
     };
@@ -169,10 +143,7 @@ export default class FormHandlerPresenter extends Presenter {
     this.model.activePoint.type = type;
     this.view.destinationSelectView.setLabel(typeLabel);
     this.updateOfferSelectView();
-<<<<<<< HEAD
     this.onOfferSelectViewChange();
-=======
->>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
   }
 
   onDestinationSelectViewChange() {
@@ -198,11 +169,7 @@ export default class FormHandlerPresenter extends Presenter {
     this.model.activePoint.offerIds = offerIds;
   }
 
-<<<<<<< HEAD
   onModelModeChange() {
-=======
-  onModelMode() {
->>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
     this.view.close(false);
     if (this.model.getMode() === Mode.CREATE) {
       this.updateView();

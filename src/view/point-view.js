@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import './point-view.css';
-=======
-import './css/point-view.css';
->>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
 import View, {html} from './view.js';
 
 export default class PointView extends View {

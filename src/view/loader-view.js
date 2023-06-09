@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import './loader-view.css';
-=======
-import './css/loader-view.css';
->>>>>>> 5d73b91888a8a704c5c1096b0435fdaf4ad6674a
 import View from './view.js';
 
 /**
